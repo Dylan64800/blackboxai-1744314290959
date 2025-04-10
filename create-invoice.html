@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouvelle facture - FacturePro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="dashboard.html" class="text-2xl font-bold text-indigo-600">FacturePro</a>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="dashboard.html" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Tableau de bord
+                        </a>
+                        <a href="#" class="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Factures
+                        </a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Clients
+                        </a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Rapports
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                        <!-- Profile dropdown -->
+                        <div class="ml-3 relative">
+                            <div>
+                                <button type="button" class="flex text-sm rounded-full focus:outline-none" id="profileButton">
+                                    <span class="sr-only">Ouvrir le menu utilisateur</span>
+                                    <div class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                </button>
+                            </div>
+                            <!-- Dropdown menu -->
+                            <div id="profileMenu" class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                <div class="px-4 py-2 text-xs text-gray-500" id="userRoleIndicator"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mon profil</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Paramètres</a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="#" id="logoutButton" class="block px-4 py-2 text-sm text-red-700 hover:bg-gray-100">
+                                    Se déconnecter
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 sm:px-0">
+            <h1 class="text-2xl font-semibold text-gray-900">Nouvelle facture</h1>
+        </div>
+
+        <form id="invoiceForm" class="mt-6">
+            <div class="shadow sm:rounded-md sm:overflow-hidden">
+                <!-- Client Information -->
+                <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+                    <div>
+                        <h3 class="text-lg font-medium leading-6 text-gray-900">Informations client</h3>
+                    </div>
+
+                    <div class="grid grid-cols-6 gap-6">
+                        <div class="col-span-6 sm:col-span-4">
+                            <label for="client" class="block text-sm font-medium text-gray-700">Client</label>
+                            <select id="client" name="client" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                <option value="">Sélectionner un client</option>
+                                <!-- Client list will be populated dynamically -->
+                            </select>
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-2">
+                            <button type="button" id="newClientBtn" class="mt-6 w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <i class="fas fa-plus mr-2"></i> Nouveau client
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoice Items -->
+                <div class="px-4 py-5 bg-white space-y-6 sm:p-6 border-t border-gray-200">
+                    <div>
+                        <h3 class="text-lg font-medium leading-6 text-gray-900">Articles</h3>
+                    </div>
+
+                    <div id="invoiceItems">
+                        <!-- Invoice items will be added here -->
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="button" id="addItemBtn" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <i class="fas fa-plus mr-2"></i> Ajouter un article
+                        </button>
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="mt-6 border-t border-gray-200 pt-4">
+                        <div class="flex justify-end">
+                            <dl class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <dt class="text-sm text-gray-600">Sous-total</dt>
+                                    <dd class="text-sm font-medium text-gray-900" id="subtotal">0,00 €</dd>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <dt class="text-sm text-gray-600">TVA (20%)</dt>
+                                    <dd class="text-sm font-medium text-gray-900" id="tax">0,00 €</dd>
+                                </div>
+                                <div class="flex items-center justify-between border-t border-gray-200 pt-2">
+                                    <dt class="text-base font-medium text-gray-900">Total</dt>
+                                    <dd class="text-base font-medium text-gray-900" id="total">0,00 €</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Information -->
+                <div class="px-4 py-5 bg-white space-y-6 sm:p-6 border-t border-gray-200">
+                    <div>
+                        <h3 class="text-lg font-medium leading-6 text-gray-900">Informations complémentaires</h3>
+                    </div>
+
+                    <div class="grid grid-cols-6 gap-6">
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="dueDate" class="block text-sm font-medium text-gray-700">Date d'échéance</label>
+                            <input type="date" name="dueDate" id="dueDate" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="col-span-6">
+                            <label for="notes" class="block text-sm font-medium text-gray-700">Notes</label>
+                            <textarea id="notes" name="notes" rows="3" class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
+                    <button type="button" id="previewBtn" class="mr-3 inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <i class="fas fa-eye mr-2"></i> Aperçu
+                    </button>
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <i class="fas fa-save mr-2"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Success message -->
+        <div id="successMessage" class="fixed bottom-0 right-0 m-6 hidden">
+            <div class="rounded-md bg-green-50 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-check-circle text-green-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800" id="successText"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import services and utilities -->
+    <script src="js/services.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        // Check authentication
+        if (!Utils.checkAuth()) {
+            window.location.href = 'login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize interface
+            const userId = sessionStorage.getItem('userId');
+            const userName = sessionStorage.getItem('userName');
+            const isAdmin = Utils.isAdmin();
+
+            // Update role indicator
+            document.getElementById('userRoleIndicator').textContent = isAdmin ? 
+                'Administrateur système' : 
+                'Utilisateur standard';
+
+            // Load clients into select
+            function loadClients() {
+                const clients = FactureProService.clients.getAll();
+                const clientSelect = document.getElementById('client');
+                clientSelect.innerHTML = '<option value="">Sélectionner un client</option>' +
+                    clients.map(client => `
+                        <option value="${client.id}">${client.company} - ${client.name}</option>
+                    `).join('');
+            }
+
+            // Initialize invoice items
+            let itemCount = 0;
+            function addInvoiceItem() {
+                const itemsContainer = document.getElementById('invoiceItems');
+                const itemId = `item_${itemCount++}`;
+                
+                const itemHtml = `
+                    <div id="${itemId}" class="grid grid-cols-12 gap-4 mb-4">
+                        <div class="col-span-6">
+                            <label class="block text-sm font-medium text-gray-700">Description</label>
+                            <input type="text" name="description" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Quantité</label>
+                            <input type="number" name="quantity" min="1" value="1" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Prix unitaire</label>
+                            <input type="number" name="price" min="0" step="0.01" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="block text-sm font-medium text-gray-700">Total</label>
+                            <div class="mt-2 text-sm font-medium text-gray-900 item-total">0,00 €</div>
+                        </div>
+                        <div class="col-span-1">
+                            <button type="button" class="mt-6 text-red-600 hover:text-red-900" onclick="removeItem('${itemId}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                itemsContainer.insertAdjacentHTML('beforeend', itemHtml);
+                
+                // Add event listeners for calculations
+                const item = document.getElementById(itemId);
+                const quantityInput = item.querySelector('[name="quantity"]');
+                const priceInput = item.querySelector('[name="price"]');
+                
+                [quantityInput, priceInput].forEach(input => {
+                    input.addEventListener('input', () => {
+                        updateItemTotal(itemId);
+                        updateTotals();
+                    });
+                });
+            }
+
+            // Remove invoice item
+            window.removeItem = function(itemId) {
+                document.getElementById(itemId).remove();
+                updateTotals();
+            };
+
+            // Update item total
+            function updateItemTotal(itemId) {
+                const item = document.getElementById(itemId);
+                const quantity = parseFloat(item.querySelector('[name="quantity"]').value) || 0;
+                const price = parseFloat(item.querySelector('[name="price"]').value) || 0;
+                const total = quantity * price;
+                item.querySelector('.item-total').textContent = Utils.formatCurrency(total);
+            }
+
+            // Update invoice totals
+            function updateTotals() {
+                const items = Array.from(document.querySelectorAll('#invoiceItems > div')).map(item => ({
+                    quantity: parseFloat(item.querySelector('[name="quantity"]').value) || 0,
+                    price: parseFloat(item.querySelector('[name="price"]').value) || 0
+                }));
+
+                const totals = Utils.calculateInvoiceTotals(items);
+                
+                document.getElementById('subtotal').textContent = Utils.formatCurrency(totals.subtotal);
+                document.getElementById('tax').textContent = Utils.formatCurrency(totals.tax);
+                document.getElementById('total').textContent = Utils.formatCurrency(totals.total);
+            }
+
+            // Add first invoice item
+            addInvoiceItem();
+
+            // Event Listeners
+            document.getElementById('addItemBtn').addEventListener('click', addInvoiceItem);
+
+            // Profile dropdown functionality
+            const profileButton = document.getElementById('profileButton');
+            const profileMenu = document.getElementById('profileMenu');
+            
+            profileButton.addEventListener('click', function() {
+                profileMenu.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!profileButton.contains(event.target) && !profileMenu.contains(event.target)) {
+                    profileMenu.classList.add('hidden');
+                }
+            });
+
+            // Logout functionality
+            document.getElementById('logoutButton').addEventListener('click', function(e) {
+                e.preventDefault();
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            });
+
+            // Form submission
+            document.getElementById('invoiceForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const clientId = document.getElementById('client').value;
+                if (!clientId) {
+                    Utils.showError('Veuillez sélectionner un client');
+                    return;
+                }
+
+                const items = Array.from(document.querySelectorAll('#invoiceItems > div')).map(item => ({
+                    description: item.querySelector('[name="description"]').value,
+                    quantity: parseFloat(item.querySelector('[name="quantity"]').value) || 0,
+                    price: parseFloat(item.querySelector('[name="price"]').value) || 0
+                }));
+
+                if (items.some(item => !item.description || !item.quantity || !item.price)) {
+                    Utils.showError('Veuillez remplir tous les champs des articles');
+                    return;
+                }
+
+                const totals = Utils.calculateInvoiceTotals(items);
+                const client = FactureProService.clients.getAll().find(c => c.id === parseInt(clientId));
+
+                const invoice = FactureProService.invoices.create({
+                    clientId: parseInt(clientId),
+                    clientName: client.company,
+                    items,
+                    subtotal: totals.subtotal,
+                    tax: totals.tax,
+                    total: totals.total,
+                    dueDate: document.getElementById('dueDate').value,
+                    notes: document.getElementById('notes').value
+                });
+
+                Utils.showSuccess('Facture créée avec succès');
+                setTimeout(() => window.location.href = 'dashboard.html', 1500);
+            });
+
+            // Load initial data
+            loadClients();
+        });
+    </script>
+</body>
+</html>
