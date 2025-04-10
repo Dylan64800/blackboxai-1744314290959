@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapports - FacturePro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="dashboard.html" class="text-2xl font-bold text-indigo-600">FacturePro</a>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="dashboard.html" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Tableau de bord
+                        </a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Factures
+                        </a>
+                        <a href="clients.html" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Clients
+                        </a>
+                        <a href="reports.html" class="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Rapports
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                        <!-- Profile dropdown -->
+                        <div class="ml-3 relative">
+                            <div>
+                                <button type="button" class="flex text-sm rounded-full focus:outline-none" id="profileButton">
+                                    <span class="sr-only">Ouvrir le menu utilisateur</span>
+                                    <div class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                </button>
+                            </div>
+                            <!-- Dropdown menu -->
+                            <div id="profileMenu" class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                <div class="px-4 py-2 text-xs text-gray-500" id="userRoleIndicator"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mon profil</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Paramètres</a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="#" id="logoutButton" class="block px-4 py-2 text-sm text-red-700 hover:bg-gray-100">
+                                    Se déconnecter
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 sm:px-0">
+            <h1 class="text-2xl font-semibold text-gray-900">Rapports et Analyses</h1>
+            <p class="mt-2 text-sm text-gray-600">Visualisez vos données financières et suivez vos performances</p>
+        </div>
+
+        <!-- Time Period Selection -->
+        <div class="mt-6 bg-white shadow rounded-lg p-4">
+            <div class="flex space-x-4">
+                <button id="monthlyBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    Vue mensuelle
+                </button>
+                <button id="yearlyBtn" class="px-4 py-2 bg-white text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    Vue annuelle
+                </button>
+            </div>
+        </div>
+
+        <!-- Monthly Overview -->
+        <div id="monthlyView" class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <!-- Revenue Chart -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-medium text-gray-900">Chiffre d'affaires mensuel</h2>
+                <div class="mt-4 h-72">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Invoice Status Chart -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-medium text-gray-900">Statut des factures</h2>
+                <div class="mt-4 h-72">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Payment Performance -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-medium text-gray-900">Performance des paiements</h2>
+                <div class="mt-4 h-72">
+                    <canvas id="paymentChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Client Growth -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-medium text-gray-900">Croissance des clients</h2>
+                <div class="mt-4 h-72">
+                    <canvas id="clientChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Yearly Overview (Hidden by default) -->
+        <div id="yearlyView" class="hidden mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <!-- Annual Revenue Chart -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-medium text-gray-900">Chiffre d'affaires annuel</h2>
+                <div class="mt-4 h-72">
+                    <canvas id="annualRevenueChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Annual Growth Chart -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-medium text-gray-900">Croissance annuelle</h2>
+                <div class="mt-4 h-72">
+                    <canvas id="annualGrowthChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Clients -->
+        <div class="mt-6">
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-medium text-gray-900">Top 5 Clients</h2>
+                <div class="mt-4">
+                    <div class="flex flex-col">
+                        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                            <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                                <div class="overflow-hidden">
+                                    <table class="min-w-full divide-y divide-gray-200">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Client
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Nombre de factures
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Montant total
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="topClientsTable" class="bg-white divide-y divide-gray-200">
+                                            <!-- Top clients will be populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import services and utilities -->
+    <script src="js/services.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        // Check authentication
+        if (!Utils.checkAuth()) {
+            window.location.href = 'login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize interface
+            const userId = sessionStorage.getItem('userId');
+            const userName = sessionStorage.getItem('userName');
+            const isAdmin = Utils.isAdmin();
+
+            // Update role indicator
+            document.getElementById('userRoleIndicator').textContent = isAdmin ? 
+                'Administrateur système' : 
+                'Utilisateur standard';
+
+            // View switching
+            const monthlyView = document.getElementById('monthlyView');
+            const yearlyView = document.getElementById('yearlyView');
+            const monthlyBtn = document.getElementById('monthlyBtn');
+            const yearlyBtn = document.getElementById('yearlyBtn');
+
+            monthlyBtn.addEventListener('click', () => {
+                monthlyView.classList.remove('hidden');
+                yearlyView.classList.add('hidden');
+                monthlyBtn.classList.add('bg-indigo-600', 'text-white');
+                monthlyBtn.classList.remove('bg-white', 'text-gray-700');
+                yearlyBtn.classList.remove('bg-indigo-600', 'text-white');
+                yearlyBtn.classList.add('bg-white', 'text-gray-700');
+            });
+
+            yearlyBtn.addEventListener('click', () => {
+                yearlyView.classList.remove('hidden');
+                monthlyView.classList.add('hidden');
+                yearlyBtn.classList.add('bg-indigo-600', 'text-white');
+                yearlyBtn.classList.remove('bg-white', 'text-gray-700');
+                monthlyBtn.classList.remove('bg-indigo-600', 'text-white');
+                monthlyBtn.classList.add('bg-white', 'text-gray-700');
+            });
+
+            // Chart configurations
+            const chartConfig = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            };
+
+            const currencyScaleConfig = {
+                beginAtZero: true,
+                ticks: {
+                    callback: value => Utils.formatCurrency(value)
+                },
+                grid: {
+                    drawBorder: false
+                }
+            };
+
+            const getMaxValue = (data) => {
+                const max = Math.max(...data);
+                return max + (max * 0.1); // Add 10% padding
+            };
+
+            // Monthly Revenue Chart
+            const monthlyData = FactureProService.invoices.getMonthlyAnalytics();
+            new Chart(document.getElementById('revenueChart'), {
+                type: 'line',
+                data: {
+                    labels: monthlyData.map(d => d.month),
+                    datasets: [{
+                        label: 'Chiffre d\'affaires',
+                        data: monthlyData.map(d => parseFloat(d.total)),
+                        borderColor: 'rgb(79, 70, 229)',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    ...chartConfig,
+                    scales: {
+                        y: {
+                            ...currencyScaleConfig,
+                            max: getMaxValue(monthlyData.map(d => parseFloat(d.total)))
+                        }
+                    },
+                    plugins: {
+                        ...chartConfig.plugins,
+                        tooltip: {
+                            callbacks: {
+                                label: context => Utils.formatCurrency(context.raw)
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Invoice Status Chart
+            const totalPaid = monthlyData.reduce((sum, d) => sum + d.paid, 0);
+            const totalPending = monthlyData.reduce((sum, d) => sum + d.pending, 0);
+            new Chart(document.getElementById('statusChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Payées', 'En attente'],
+                    datasets: [{
+                        data: [parseFloat(totalPaid), parseFloat(totalPending)],
+                        backgroundColor: [
+                            'rgb(34, 197, 94)',
+                            'rgb(234, 179, 8)'
+                        ]
+                    }]
+                },
+                options: {
+                    ...chartConfig,
+                    plugins: {
+                        ...chartConfig.plugins,
+                        tooltip: {
+                            callbacks: {
+                                label: context => {
+                                    const value = context.raw;
+                                    const percentage = ((value / (totalPaid + totalPending)) * 100).toFixed(1);
+                                    return `${Utils.formatCurrency(value)} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Payment Performance Chart
+            const paymentAnalytics = FactureProService.invoices.getPaymentAnalytics();
+            const onTime = paymentAnalytics.paymentDistribution.onTime;
+            const late = paymentAnalytics.paymentDistribution.late;
+            const total = onTime + late;
+            
+            new Chart(document.getElementById('paymentChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['À temps', 'En retard'],
+                    datasets: [{
+                        data: [parseInt(onTime), parseInt(late)],
+                        backgroundColor: [
+                            'rgb(34, 197, 94)',
+                            'rgb(239, 68, 68)'
+                        ]
+                    }]
+                },
+                options: {
+                    ...chartConfig,
+                    plugins: {
+                        ...chartConfig.plugins,
+                        tooltip: {
+                            callbacks: {
+                                label: context => {
+                                    const value = context.raw;
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${value} facture${value > 1 ? 's' : ''} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Client Growth Chart
+            const clientAnalytics = FactureProService.clients.getAnalytics();
+            new Chart(document.getElementById('clientChart'), {
+                type: 'bar',
+                data: {
+                    labels: monthlyData.map(d => d.month),
+                    datasets: [{
+                        label: 'Nouveaux clients',
+                        data: monthlyData.map((_, index) => 
+                            index === monthlyData.length - 1 ? clientAnalytics.newClientsThisMonth : 0
+                        ),
+                        backgroundColor: 'rgb(79, 70, 229)'
+                    }]
+                },
+                options: {
+                    ...chartConfig,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: Math.max(clientAnalytics.newClientsThisMonth + 1, 5),
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Annual Charts
+            const yearlyData = FactureProService.invoices.getYearlyAnalytics();
+            
+            // Annual Revenue Chart
+            new Chart(document.getElementById('annualRevenueChart'), {
+                type: 'bar',
+                data: {
+                    labels: yearlyData.map(d => d.year),
+                    datasets: [{
+                        label: 'Chiffre d\'affaires',
+                        data: yearlyData.map(d => parseFloat(d.total)),
+                        backgroundColor: 'rgb(79, 70, 229)'
+                    }]
+                },
+                options: {
+                    ...chartConfig,
+                    scales: {
+                        y: {
+                            ...currencyScaleConfig,
+                            max: getMaxValue(yearlyData.map(d => parseFloat(d.total)))
+                        }
+                    },
+                    plugins: {
+                        ...chartConfig.plugins,
+                        tooltip: {
+                            callbacks: {
+                                label: context => Utils.formatCurrency(context.raw)
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Annual Growth Chart
+            new Chart(document.getElementById('annualGrowthChart'), {
+                type: 'line',
+                data: {
+                    labels: yearlyData.map(d => d.year),
+                    datasets: [{
+                        label: 'Croissance',
+                        data: yearlyData.map((d, i) => {
+                            if (i === 0) return 0;
+                            const prevYear = yearlyData[i - 1].total;
+                            return ((d.total - prevYear) / prevYear) * 100;
+                        }),
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    ...chartConfig,
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: value => value.toFixed(1) + '%'
+                            }
+                        }
+                    },
+                    plugins: {
+                        ...chartConfig.plugins,
+                        tooltip: {
+                            callbacks: {
+                                label: context => context.raw.toFixed(1) + '%'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Populate Top Clients Table
+            const topClientsTable = document.getElementById('topClientsTable');
+            clientAnalytics.topClients.forEach(client => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${client.name}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${client.invoiceCount}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${Utils.formatCurrency(client.totalAmount)}</div>
+                    </td>
+                `;
+                topClientsTable.appendChild(row);
+            });
+
+            // Profile dropdown functionality
+            const profileButton = document.getElementById('profileButton');
+            const profileMenu = document.getElementById('profileMenu');
+            
+            profileButton.addEventListener('click', function() {
+                profileMenu.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!profileButton.contains(event.target) && !profileMenu.contains(event.target)) {
+                    profileMenu.classList.add('hidden');
+                }
+            });
+
+            // Logout functionality
+            document.getElementById('logoutButton').addEventListener('click', function(e) {
+                e.preventDefault();
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            });
+        });
+    </script>
+</body>
+</html>
